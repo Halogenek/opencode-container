@@ -9,7 +9,7 @@ This project provides a containerized OpenCode installation that:
 - Isolates OpenCode execution from your host system
 - Restricts AI operations to mounted project directories only
 - Preserves OpenCode configuration across container restarts
-- Initializes EECC opencode config, if not already initialized
+
 - Configurable package installation via `packages.txt`
 
 ## Usage
