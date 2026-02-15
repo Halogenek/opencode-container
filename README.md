@@ -1,5 +1,3 @@
-[![Docker](https://github.com/european-epc-competence-center/opencode-container/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/european-epc-competence-center/opencode-container/actions/workflows/docker-publish.yml)
-
 # OpenCode Container
 
 A Docker container for running OpenCode in an isolated environment to protect your host system from potential AI-executed commands.
@@ -12,7 +10,7 @@ This project provides a containerized OpenCode installation that:
 - Restricts AI operations to mounted project directories only
 - Preserves OpenCode configuration across container restarts
 - Initializes EECC opencode config, if not already initialized
-- Initializes `.cursor/rules` in any workdir, if not already present.
+- Configurable package installation via `packages.txt`
 
 ## Usage
 
@@ -20,7 +18,7 @@ Recommended: Create a link to the run script in your path. The following creates
 
 ```
 cd opencode-container
-ln -s $(pwd)/run_opencode_container.sh ~/.local/bin/opencode
+ln -s $(pwd)/build_and_run_opencode_container.sh ~/.local/bin/opencode
 ```
 
 then you can run opencode from your project folder
@@ -36,13 +34,9 @@ Or also use open code commands like
 opencode run "analyze project and init or update notes according to @./cusror/rules/notes.md"
 ```
 
-## Local Build
+### Running
 
 ```bash
-# Clone this repository
-git clone git@gitlab.eecc.info:eecc-internal/opencode-container.git
-cd opencode-container
-
 # Run OpenCode in a container (builds automatically if needed)
 ./build_and_run_opencode_container.sh
 ```
@@ -54,9 +48,17 @@ This will:
 3. Mount OpenCode config directories for persistence
 4. Start an interactive OpenCode session
 
+## Customizing Packages
+
+The container uses a `packages.txt` file to install system dependencies.
+
+1. Edit `packages.txt` (one package per line, comments with `#`)
+2. Rebuild the container: `./build_and_run_opencode_container.sh -b`
+
 ## License
 
 Copyright 2025 European EPC Competence Center GmbH (EECC). Corresponding Author: Sebastian Schmittner <sebastian.schmittner@eecc.de>
+Copyright 2026 Jakub Niemczuk (jakub@niemczuk.tech)
 
 <a href="https://www.gnu.org/licenses/agpl-3.0.html">
 <img alt="AGPLV3" style="border-width:0" src="https://www.gnu.org/graphics/agplv3-with-text-162x68.png" /><br />

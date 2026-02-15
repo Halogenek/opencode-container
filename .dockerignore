@@ -20,3 +20,10 @@ run_opencode_container.sh
 .env.local
 *.log
 
+# Include vendor directory for frozen sources
+!vendor/
+
+# Include OpenCode configuration files
+!opencode.config
+!scripts/secure_opencode_install.sh
+

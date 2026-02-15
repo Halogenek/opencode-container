@@ -9,7 +9,6 @@ source "${SCRIPT_DIR}"/functions.sh
 main() {
     change_user_if_necessary "$@"
     check_config
-    init_rules
 
     if [ "$1" = "-s" ]; then
         shift # remove '-s'

@@ -30,14 +30,24 @@ check_config() {
         echo "Auth file not found."
         mkdir -p ~/.local/share/opencode
 
-        echo ""
-        echo -n "Do you want to connect to the EECC AI API at https://portal.eecc.ai/ ? (y/n): "
-        read -r use_eecc
+        # Check for environment variable first (non-interactive mode)
+        if [ -n "$EECC_API_KEY" ]; then
+            echo "Using EECC API key from environment variable..."
+            api_key="$EECC_API_KEY"
+            use_eecc="y"
+        else
+            # Interactive mode
+            echo ""
+            echo -n "Do you want to connect to the EECC AI API at https://portal.eecc.ai/ ? (y/n): "
+            read -r use_eecc
+
+            if [ "$use_eecc" = "y" ] || [ "$use_eecc" = "Y" ] || [ "$use_eecc" = "yes" ] || [ "$use_eecc" = "Yes" ] || [ "$use_eecc" = "YES" ]; then
+                echo -n "Please enter your EECC API key (generate at https://portal.eecc.ai/ ): "
+                read -r api_key
+            fi
+        fi
 
         if [ "$use_eecc" = "y" ] || [ "$use_eecc" = "Y" ] || [ "$use_eecc" = "yes" ] || [ "$use_eecc" = "Yes" ] || [ "$use_eecc" = "YES" ]; then
-            echo -n "Please enter your EECC API key (generate at https://portal.eecc.ai/ ): "
-            read -r api_key
-
             if [ -z "$api_key" ]; then
                 echo "Error: API key cannot be empty."
                 exit 1
@@ -100,34 +110,21 @@ EOF
 
 }
 
-init_rules() {
-    mkdir -p ".cursor/rules"
-
-    if [ ! -f ".cursor/rules/notes.mdc" ]; then
-        echo "Initializing notes.mdc rule..."
-        cp "/cursor/rules/notes.mdc" ".cursor/rules/notes.mdc"
-    fi
-
-    if [ ! -f ".cursor/rules/changelog-conventions.mdc" ]; then
-        echo "Initializing changelog-conventions.mdc rule..."
-        cp "/cursor/rules/changelog-conventions.mdc" ".cursor/rules/changelog-conventions.mdc"
-    fi
-}
-
 # Configure passwordless sudo for the opencode user
-# This function runs as root and writes to /etc/sudoers.d/opencode
+# This function runs as root and ensures sudoers configuration exists
 configure_sudoers() {
-    local sudoers_file="/etc/sudoers"
+    local sudoers_file="/etc/sudoers.d/opencode"
 
-    echo "Configuring passwordless sudo for opencode user..."
+    echo "Ensuring passwordless sudo for opencode user..."
 
-    # Write the sudoers configuration
-    echo "opencode ALL=(ALL) NOPASSWD:ALL" >>"$sudoers_file"
-
-    # Set correct permissions: 0440 (read-only for owner and group)
-    chmod 0440 "$sudoers_file"
-
-    echo "Sudoers configuration complete."
+    # Create sudoers.d file if it doesn't exist
+    if [ ! -f "$sudoers_file" ]; then
+        echo "opencode ALL=(ALL) NOPASSWD:ALL" > "$sudoers_file"
+        chmod 0440 "$sudoers_file"
+        echo "Sudoers configuration created."
+    else
+        echo "Sudoers configuration already exists."
+    fi
 }
 
 change_user_if_necessary() {

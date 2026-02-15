@@ -6,7 +6,7 @@ IMAGE="${IMAGE:="opencode:local"}"
 
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 
-source "${SCRIPT_DIR}"/common.sh
+source "${SCRIPT_DIR}"/scripts/common.sh
 
 show_help() {
     cat <<EOF

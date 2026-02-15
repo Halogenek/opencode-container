@@ -1,0 +1,61 @@
+# Core
+bash
+curl
+ca-certificates
+git
+sudo
+jq
+python3
+python3-pip
+python3-venv
+npm
+ripgrep
+gosu
+
+# C/C++ Development Tools
+build-essential
+gcc
+g++
+clang
+clang-tidy
+clang-format
+lldb
+gdb
+valgrind
+cmake
+make
+ninja-build
+autoconf
+automake
+libtool
+pkg-config
+
+# Testing and Analysis
+cppcheck
+lcov
+gcovr
+libbenchmark-dev
+catch2
+doxygen
+graphviz
+
+# Libraries and Dependencies
+libc6-dev
+libboost-all-dev
+libssl-dev
+libcurl4-openssl-dev
+libxml2-dev
+libyaml-dev
+libjsoncpp-dev
+libgtest-dev
+libgmock-dev
+
+# Utilities
+ccache
+bear
+cpplint
+cloc
+htop
+strace
+ltrace
+time
