@@ -2,6 +2,11 @@
 
 set -e
 
+PROJECT_DIR_NAME=$(basename "$PWD")
+# Docker container names can only contain [a-zA-Z0-9_.-]
+SANITIZED_PROJECT_NAME=$(echo "$PROJECT_DIR_NAME" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9_.-]/_/g')
+CONTAINER_NAME="opencode-${SANITIZED_PROJECT_NAME}"
+
 IMAGE="${IMAGE:="opencode:local"}"
 
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

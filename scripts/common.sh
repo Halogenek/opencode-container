@@ -15,7 +15,7 @@ run_container() {
     mkdir -p "$HOME/.local/state/opencode"
 
     docker run -it --rm \
-        --name opencode \
+        --name "$CONTAINER_NAME" \
         -e HOST_UID="$(id -u)" \
         -e HOST_GID="$(id -g)" \
         -v "$(pwd):/app" \
