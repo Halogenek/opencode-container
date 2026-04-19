@@ -49,6 +49,9 @@ libyaml-dev
 libjsoncpp-dev
 libgtest-dev
 libgmock-dev
+libyaml-cpp-dev
+libwxgtk3.2-dev
+wx3.2-headers
 
 # Utilities
 ccache
