@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 
 # Install system dependencies from packages.txt
 COPY packages.txt /tmp/packages.txt

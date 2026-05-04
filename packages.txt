@@ -18,6 +18,7 @@ gcc
 g++
 clang
 clang-tidy
+clang-tidy-19
 clang-format
 lldb
 gdb
