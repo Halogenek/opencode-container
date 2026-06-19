@@ -39,6 +39,7 @@ libbenchmark-dev
 catch2
 doxygen
 graphviz
+xvfb
 
 # Libraries and Dependencies
 libc6-dev
