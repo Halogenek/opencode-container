@@ -1,20 +1,24 @@
 # OpenCode Container
 
-A Docker container for running OpenCode in an isolated environment to protect your host system from potential AI-executed commands.
+A Docker container for running OpenCode v2 in an isolated environment to protect your host system from potential AI-executed commands.
 
 ## Overview
 
-This project provides a containerized OpenCode installation that:
+This project provides a containerized OpenCode v2 installation that:
 
 - Isolates OpenCode execution from your host system
-- Restricts AI operations to mounted project directories only
-- Preserves OpenCode configuration across container restarts
+- Only exposes host files through explicit bind mounts
+- Preserves OpenCode configuration, sessions, credentials, and cache across container restarts
+- Installs a pinned OpenCode version from verified platform binaries
+- Supports configurable package installation via `packages.txt`
 
-- Configurable package installation via `packages.txt`
+The image installs OpenCode v2.3.2. OpenCode v2 is distributed as platform-specific npm packages (`@opencode/cli-<os>-<arch>`); the old `opencode-ai` npm package only contains v1 releases.
+
+> Note: OpenCode v2 allows access to paths outside the project inside the container by default. Host files remain protected because only explicitly mounted directories are visible to the container.
 
 ## Usage
 
-Recommended: Create a link to the run script in your path. The following creates a bin symlink callen `opencode`, you may of course choose another name.
+Recommended: Create a link to the run script in your path. The following creates a bin symlink called `opencode`, you may of course choose another name.
 
 ```
 cd opencode-container
@@ -31,22 +35,41 @@ opencode
 Or also use open code commands like
 
 ```
-opencode run "analyze project and init or update notes according to @./cusror/rules/notes.md"
+opencode run "analyze project and init or update notes according to @./cursor/rules/notes.md"
 ```
 
 ### Running
 
 ```bash
-# Run OpenCode in a container (builds automatically if needed)
+# Run OpenCode in a container (rebuilds the image using Docker layer caching)
 ./build_and_run_opencode_container.sh
 ```
 
 This will:
 
-1. Build the OpenCode Docker image (if not already built, force with `-b`)
+1. Build the OpenCode Docker image on every run (force a clean rebuild with `-b`)
 2. Mount your current directory to `/app` in the container
-3. Mount OpenCode config directories for persistence
+3. Mount OpenCode config, data, state, and cache directories for persistence
 4. Start an interactive OpenCode session
+
+### Persistent directories
+
+| Host path                   | Contents                                                                     |
+| --------------------------- | ---------------------------------------------------------------------------- |
+| `~/.local/share/opencode`   | Sessions, credentials database (`opencode.db`), logs, and repositories       |
+| `~/.config/opencode`        | `opencode.json(c)`, `cli.json`, `AGENTS.md`, and other user configuration    |
+| `~/.local/state/opencode`   | State and lock files                                                         |
+| `~/.cache/opencode`         | Cached data and downloaded helper binaries                                   |
+
+## Upgrading from OpenCode v1
+
+- v2 reuses the same config, data, and state directories.
+- An existing `~/.local/share/opencode/auth.json` is imported into the v2 credential database on first start.
+- Global terminal settings are migrated from `tui.json` to `~/.config/opencode/cli.json` on first start.
+- V1 plugins do not run in v2 (new plugin API), and integrations that use the v1 server API need porting.
+- Rebuild the image instead of running `opencode upgrade` inside the container; the installed binary is pinned to the image.
+
+See the OpenCode documentation at https://opencode.ai/docs for details.
 
 ## Customizing Packages
 

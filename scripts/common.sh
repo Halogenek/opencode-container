@@ -13,6 +13,7 @@ run_container() {
     mkdir -p "$HOME/.local/share/opencode"
     mkdir -p "$HOME/.config/opencode"
     mkdir -p "$HOME/.local/state/opencode"
+    mkdir -p "$HOME/.cache/opencode"
 
     docker run -it --rm \
         --name "$CONTAINER_NAME" \
@@ -22,6 +23,7 @@ run_container() {
         -v "$HOME/.local/share/opencode:/home/opencode/.local/share/opencode" \
         -v "$HOME/.config/opencode:/home/opencode/.config/opencode" \
         -v "$HOME/.local/state/opencode:/home/opencode/.local/state/opencode" \
+        -v "$HOME/.cache/opencode:/home/opencode/.cache/opencode" \
         "$IMAGE" \
         "${POSITIONAL_ARGS[@]}"
 }

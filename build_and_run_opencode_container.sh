@@ -17,10 +17,10 @@ show_help() {
     cat <<EOF
 Usage: $(basename "$0") [OPTIONS] [-- OPENCODE_ARGS...]
 
-Run the OpenCode container. Builds the image if it doesn't exist.
+Run the OpenCode container. The image is rebuilt on every run using Docker layer caching.
 
 OPTIONS:
-    -b              Force rebuild of the OpenCode image
+    -b              Force a clean rebuild of the OpenCode image (disables layer cache)
     -i IMAGE        Use specified Docker image name (default: opencode:local)
     -h              Show this help message and exit
 
@@ -30,11 +30,11 @@ ARGUMENTS AFTER '--':
     by this script (e.g., -b, -h).
 
 EXAMPLES:
-    $(basename "$0")                        # Run the container (build if needed)
-    $(basename "$0") -b                     # Force rebuild and run the container
+    $(basename "$0")                        # Run the container (rebuild with cache)
+    $(basename "$0") -b                     # Clean rebuild and run the container
     $(basename "$0") -i myimage:latest      # Use custom image name
     $(basename "$0") -- --version           # Pass --version to opencode
-    $(basename "$0") -b -- --help           # Rebuild container, then pass --help to opencode
+    $(basename "$0") -b -- --help           # Clean rebuild, then pass --help to opencode
     $(basename "$0") -i "ghcr.io/european-epc-competence-center/opencode-container:main" -b        # Use the github image instead of the local one
 
 EOF
@@ -90,19 +90,13 @@ build_image() {
     echo "Building opencode image..."
     echo "Build directory: $SCRIPT_DIR"
 
-    # Force rebuild if requested
+    # Always build; Docker layer caching keeps unchanged builds cheap.
+    # Force a clean rebuild when requested.
     if [ "$force_build" = true ]; then
-        echo "Force rebuilding opencode image..."
-        DOCKER_BUILDKIT=1 docker build --progress=plain -t "$IMAGE" "$SCRIPT_DIR"
-        return
-    fi
-
-    # Build the image if it doesn't exist
-    if [ -z "$(docker images -q "$IMAGE" 2>/dev/null)" ]; then
-        echo "Building opencode image..."
-        DOCKER_BUILDKIT=1 docker build --progress=plain -t "$IMAGE" "$SCRIPT_DIR"
+        echo "Force rebuilding opencode image without cache..."
+        DOCKER_BUILDKIT=1 docker build --no-cache --progress=plain -t "$IMAGE" "$SCRIPT_DIR"
     else
-        echo "Using existing opencode image."
+        DOCKER_BUILDKIT=1 docker build --progress=plain -t "$IMAGE" "$SCRIPT_DIR"
     fi
 }
 

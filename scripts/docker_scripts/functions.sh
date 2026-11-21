@@ -26,13 +26,16 @@ configure_user() {
 }
 
 check_config() {
-    if [ ! -f ~/.local/share/opencode/auth.json ]; then
-        echo "Auth file not found."
-        mkdir -p ~/.local/share/opencode
+    local credential_count
+
+    credential_count=$(opencode auth list --format json 2>/dev/null | jq 'length' 2>/dev/null || true)
+
+    if [ -n "$credential_count" ] && [ "$credential_count" -gt 0 ] 2>/dev/null; then
+        echo "OpenCode credentials found."
+    else
+        echo "No OpenCode credentials found."
         echo "Running standard OpenCode authentication..."
         opencode auth login
-    else
-        echo "Auth file already exists."
     fi
 }
 

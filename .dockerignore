@@ -6,8 +6,8 @@
 README.md
 Changelog.md
 
-# Ignore shell scripts (not copied into image)
-run_opencode_container.sh
+# Ignore host-only scripts (not copied into image)
+build_and_run_opencode_container.sh
 
 # Ignore cursor/editor files
 .vscode/
